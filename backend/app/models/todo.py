@@ -1,4 +1,6 @@
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+from app.models.user import User
 
 
 class TodoBase(SQLModel):
@@ -10,6 +12,9 @@ class TodoBase(SQLModel):
 
 class Todo(TodoBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
+
+    user: User = Relationship(back_populates="todos")
+    user_id: int = Field(foreign_key="user.id")
 
 
 class TodoCreate(TodoBase):
