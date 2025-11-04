@@ -6,6 +6,7 @@ from sqlmodel import select
 
 from app.core.dependencies import CurrentUser, SessionDep
 from app.core.security import create_access_token, get_password_hash, verify_password
+from app.models.token import Token
 from app.models.user import User, UserCreate, UserPublic
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -55,7 +56,7 @@ def register(user_data: UserCreate, session: SessionDep):
     return db_user
 
 
-@router.post("/login")
+@router.post("/login", response_model=Token)
 def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: SessionDep,
@@ -92,10 +93,7 @@ def login(
     # Create access token
     access_token = create_access_token(data={"sub": user.email, "user_id": user.id})
 
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-    }
+    return Token(access_token=access_token, token_type="bearer")
 
 
 @router.get("/me", response_model=UserPublic)
