@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
+from app.models.base import IDMixin
+
 if TYPE_CHECKING:
     from app.models.todo import Todo
 
@@ -14,9 +16,7 @@ class UserBase(SQLModel):
     password: str = Field(min_length=8, max_length=128)
 
 
-class User(UserBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-
+class User(IDMixin, UserBase, table=True):
     todos: list["Todo"] = Relationship(back_populates="user")
 
 

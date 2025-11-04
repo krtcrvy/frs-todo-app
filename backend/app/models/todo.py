@@ -1,5 +1,6 @@
 from sqlmodel import Field, Relationship, SQLModel
 
+from app.models.base import IDMixin
 from app.models.user import User
 
 
@@ -10,9 +11,7 @@ class TodoBase(SQLModel):
     completed: bool = Field(default=False)
 
 
-class Todo(TodoBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-
+class Todo(IDMixin, TodoBase, table=True):
     user: User = Relationship(back_populates="todos")
     user_id: int = Field(foreign_key="user.id")
 
